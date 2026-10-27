@@ -31,13 +31,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 
-
+import androidx.compose.material3.Icon
+import androidx.compose.ui.res.painterResource
 @Composable
 fun ShowCalculator(
     viewModel: CalculatorViewModel = viewModel(),
 ) {
     val result = viewModel.result.value
+    val expression = viewModel.expression.value
+
+
 
     Column(
         modifier = Modifier
@@ -45,8 +52,42 @@ fun ShowCalculator(
             .background(Color.Black)
             .safeDrawingPadding()
     ) {
+        // ZONA 1: BARRA SUPERIOR
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Button(
+                onClick = {  },
+                shape = CircleShape,
+                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.numberButton)),
+                contentPadding = PaddingValues(0.dp),
+                modifier = Modifier.size(48.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.icon_history),
+                    contentDescription = stringResource(id = R.string.historyDescription),
+                    tint = colorResource(id = R.color.white)
+                )
+            }
+            Button(
+                onClick = { /* : se hará después */ },
+                shape = CircleShape,
+                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.numberButton)),
+                contentPadding = PaddingValues(0.dp),
+                modifier = Modifier.size(48.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.icon_scientific),
+                    contentDescription = stringResource(id = R.string.scientificDescription),
+                    tint = colorResource(id = R.color.white)
+                )
+            }
+        }
 
-
+        // ZONA 2 Y 3: PANTALLA Y TECLADO
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -54,17 +95,19 @@ fun ShowCalculator(
                 .padding(10.dp),
             verticalArrangement = Arrangement.Bottom,
         ) {
+            // Expresión (gris)
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(end = 5.dp, start = 5.dp),
-                text = "",
+                text = expression,
                 fontSize = 40.sp,
                 color = Color.Gray,
                 textAlign = TextAlign.End,
                 softWrap = false,
                 maxLines = 1
             )
+            // Resultado (blanco)
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -84,56 +127,64 @@ fun ShowCalculator(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    ShowButton("≪", Color(0xFF5E5D59), viewModel)
-                    ShowButton("AC", Color(0xFF5E5D59), viewModel)
-                    ShowButton("%", Color(0xFF5E5D59), viewModel)
-                    ShowButton("÷", Color(0xFFFFA70E), viewModel)
+                    ShowButton(stringResource(id= R.string.backspaceSymbol), colorResource(id = R.color.functionButton), viewModel)
+                    ShowButton(stringResource(id= R.string.clearSymbol), colorResource(id = R.color.functionButton), viewModel)
+                    ShowButton(stringResource(id= R.string.percentSymbol), colorResource(id = R.color.functionButton), viewModel, isOperator = true)
+                    ShowButton(stringResource(id= R.string.divideSymbol), colorResource(id = R.color.operationButton), viewModel ,isOperator = true)
                 }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    ShowButton("7", Color(0xFF2A2928), viewModel)
-                    ShowButton("8", Color(0xFF2A2928), viewModel)
-                    ShowButton("9", Color(0xFF2A2928), viewModel)
-                    ShowButton("x", Color(0xFFFFA70E), viewModel)
+                    ShowButton(stringResource(id= R.string.digitSeven), colorResource(id = R.color.numberButton), viewModel)
+                    ShowButton(stringResource(id= R.string.digitEight), colorResource(id = R.color.numberButton), viewModel)
+                    ShowButton(stringResource(id= R.string.digitNine), colorResource(id = R.color.numberButton), viewModel)
+                    ShowButton(stringResource(id= R.string.multiplySymbol), colorResource(id = R.color.operationButton), viewModel ,isOperator = true)
                 }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    ShowButton("4", Color(0xFF2A2928), viewModel)
-                    ShowButton("5", Color(0xFF2A2928), viewModel)
-                    ShowButton("6", Color(0xFF2A2928), viewModel)
-                    ShowButton("-", Color(0xFFFFA70E), viewModel)
+                    ShowButton(stringResource(id= R.string.digitFour), colorResource(id = R.color.numberButton), viewModel)
+                    ShowButton(stringResource(id= R.string.digitFive), colorResource(id = R.color.numberButton), viewModel)
+                    ShowButton(stringResource(id= R.string.digitSix), colorResource(id = R.color.numberButton), viewModel)
+                    ShowButton(stringResource(id= R.string.subtractionSymbol), colorResource(id = R.color.operationButton), viewModel ,isOperator = true)
                 }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    ShowButton("1", Color(0xFF2A2928), viewModel)
-                    ShowButton("2", Color(0xFF2A2928), viewModel)
-                    ShowButton("3", Color(0xFF2A2928), viewModel)
-                    ShowButton("+", Color(0xFFFFA70E), viewModel)
+                    ShowButton(stringResource(id= R.string.digitOne), colorResource(id = R.color.numberButton), viewModel)
+                    ShowButton(stringResource(id= R.string.digitTwo), colorResource(id = R.color.numberButton), viewModel)
+                    ShowButton(stringResource(id= R.string.digitThree), colorResource(id = R.color.numberButton), viewModel)
+                    ShowButton(stringResource(id= R.string.addSymbol), colorResource(id = R.color.operationButton), viewModel ,isOperator = true)
                 }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    ShowButton("⁺/₋", Color(0xFF2A2928), viewModel)
-                    ShowButton("0", Color(0xFF2A2928), viewModel)
-                    ShowButton(",", Color(0xFF2A2928), viewModel)
-                    ShowButton("=", Color(0xFFFFA70E), viewModel)
+                    ShowButton(stringResource(id= R.string.changeSymbol), colorResource(id = R.color.numberButton), viewModel)
+                    ShowButton(stringResource(id= R.string.digitZero), colorResource(id = R.color.numberButton), viewModel)
+                    ShowButton(stringResource(id= R.string.decimalSymbol), colorResource(id = R.color.numberButton), viewModel)
+                    ShowButton(stringResource(id= R.string.equalSymbol), colorResource(id = R.color.operationButton), viewModel)
                 }
             }
         }
     }
 }
-
 @Composable
-fun ShowButton(text: String, color: Color, viewModel: CalculatorViewModel) {
+fun ShowButton(text: String, color: Color, viewModel: CalculatorViewModel, isOperator: Boolean = false) {
+    val equalSymbol = stringResource(id = R.string.equalSymbol)
+    val msgError = stringResource(id = R.string.msgError)
+    val clearSymbol = stringResource(id = R.string.clearSymbol)
+    val backspaceSymbol = stringResource(id = R.string.backspaceSymbol)
+    val changeSymbol = stringResource(id = R.string.changeSymbol)
+    val subtractionSymbol = stringResource(id = R.string.subtractionSymbol)
+    val addSymbol = stringResource(id = R.string.addSymbol)
     Button(
-        onClick = { viewModel.manageClickButtons(text) },
+        onClick = {
+            //se debe mantener el orden que hay en CalculatorViewModel
+            viewModel.manageClickButtons(text, equalSymbol, msgError, clearSymbol, backspaceSymbol, changeSymbol,subtractionSymbol,addSymbol,isOperator)},
         shape = CircleShape,
         colors = ButtonDefaults.buttonColors(color),
         modifier = Modifier
