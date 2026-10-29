@@ -14,6 +14,7 @@ class CalculatorViewModel: ViewModel() {
     private val negativeSign = "-"
     private val decimalSeparator = ","
     var lastIsOperator = false
+    private var showingResult = false
     private val rules = RulesCalculator() //aqui llamames el doc aparte con las reglas
 
 // Para agregar cada funcion de un operador se debe mantener el orden
@@ -79,6 +80,11 @@ class CalculatorViewModel: ViewModel() {
         }
     }
     fun addDigit(digit: String) {
+        if (showingResult) {
+            nodes.clear()
+            expression.value = ""
+            showingResult = false
+        }
         if (nodes.isEmpty() || lastIsOperator) {
             nodes.add(digit)
         } else {
@@ -91,6 +97,7 @@ class CalculatorViewModel: ViewModel() {
 
     fun addOperator(operatorSymbol: String) {
         if (!rules.canAddOperator(nodes, lastIsOperator, negativeSign, decimalSeparator )) return
+        showingResult = false
         if (lastIsOperator) {
             nodes[nodes.size - 1] = operatorSymbol
         } else {
@@ -101,7 +108,6 @@ class CalculatorViewModel: ViewModel() {
     }
 
     fun showNodes() {
-        expression.value = ""
         if (nodes.isEmpty()) {
             result.value = "0"
         } else {
@@ -111,6 +117,7 @@ class CalculatorViewModel: ViewModel() {
     fun clearFunction() {
         nodes.clear()
         lastIsOperator = false
+        showingResult = false
         expression.value = ""
         result.value = "0"
     }
@@ -202,8 +209,14 @@ class CalculatorViewModel: ViewModel() {
         solveFirstPriority(items, multiplySymbol, divideSymbol, percentSymbol)
 
         solveSecondPriority(items, addSymbol)
+        val finalText = resultHistory(items[0].toDouble())
         expression.value = nodes.joinToString("")
-        result.value = resultHistory(items[0].toDouble())
+        result.value = finalText
+
+        nodes.clear()
+        nodes.add(finalText)
+        lastIsOperator = false
+        showingResult = true
     }
 
     fun solveFirstPriority(

@@ -24,6 +24,9 @@ class RulesCalculator {
         if (!nodes.last().last().isDigit()) {
             return false
         }
+        if (nodes.size < 3) {
+            return false
+        }
         return true
     }
     fun canAddDecimalSeparator(nodes: List<String>, lastIsOperator: Boolean, decimalSeparator: String): Boolean {
