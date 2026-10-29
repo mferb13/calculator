@@ -27,5 +27,5 @@
     <string name="digitEight">8</string>
     <string name="digitNine">9</string>
 
-
+    <string name="divisionByZeroError">Error</string>
 </resources>

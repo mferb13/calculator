@@ -16,6 +16,7 @@ class CalculatorViewModel: ViewModel() {
     var lastIsOperator = false
     private var showingResult = false
     private val rules = RulesCalculator() //aqui llamames el doc aparte con las reglas
+    val error = mutableStateOf(CalculatorError.None)
 
 // Para agregar cada funcion de un operador se debe mantener el orden
     fun manageClickButtons(
@@ -61,6 +62,7 @@ class CalculatorViewModel: ViewModel() {
         addDecimalSeparator()
         return
     }
+
 
         if (isOperator) {
             addOperator(valueButton)
@@ -108,6 +110,10 @@ class CalculatorViewModel: ViewModel() {
     }
 
     fun showNodes() {
+        if (error.value != CalculatorError.None) {
+            error.value = CalculatorError.None
+            expression.value = ""
+        }
         if (nodes.isEmpty()) {
             result.value = "0"
         } else {
@@ -120,6 +126,7 @@ class CalculatorViewModel: ViewModel() {
         showingResult = false
         expression.value = ""
         result.value = "0"
+        error.value = CalculatorError.None
     }
 
     fun backspaceSymbolfunction() {
@@ -208,6 +215,12 @@ class CalculatorViewModel: ViewModel() {
 
         solveFirstPriority(items, multiplySymbol, divideSymbol, percentSymbol)
 
+        if (error.value != CalculatorError.None) {
+            expression.value = nodes.joinToString("")
+            nodes.clear()
+            lastIsOperator = false
+            return
+        }
         solveSecondPriority(items, addSymbol)
         val finalText = resultHistory(items[0].toDouble())
         expression.value = nodes.joinToString("")
@@ -233,6 +246,11 @@ class CalculatorViewModel: ViewModel() {
             if (isFirstPriority) {
                 val number1 = items[index - 1].replace(decimalSeparator, ".").toDouble()
                 val number2 = items[index + 1].replace(decimalSeparator, ".").toDouble()
+
+                if ((operator == divideSymbol || operator == percentSymbol) && number2 == 0.0) {
+                    error.value = CalculatorError.DivisionByZero
+                    return
+                }
                 var partialResult = 0.0
 
                 if (operator == multiplySymbol) {

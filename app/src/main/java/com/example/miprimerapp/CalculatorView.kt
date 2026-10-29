@@ -48,7 +48,11 @@ fun ShowCalculator(
 ) {
     val result = viewModel.result.value
     val expression = viewModel.expression.value
-
+    val error = viewModel.error.value
+    val resultText = when (error) {
+        CalculatorError.None -> result
+        CalculatorError.DivisionByZero -> stringResource(id = R.string.divisionByZeroError)
+    }
 
 
     Column(
@@ -100,12 +104,10 @@ fun ShowCalculator(
             verticalArrangement = Arrangement.Bottom,
         ) {
 
-
-            // Expresión (gris)
+// Expresión (gris)
             ShowDisplayText(text = expression, fontSize = 40.sp, color = Color.Gray)
             // Resultado (blanco)
-            ShowDisplayText(text = result, fontSize = 75.sp, color = Color.White)
-
+            ShowDisplayText(text = resultText, fontSize = 75.sp, color = Color.White)
 
             Column(
                 Modifier.fillMaxWidth(),
