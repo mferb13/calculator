@@ -12,6 +12,7 @@ class CalculatorViewModel: ViewModel() {
     val expression = mutableStateOf("")
     val nodes = mutableListOf<String>()
     private val negativeSign = "-"
+    private val decimalSeparator = ","
     var lastIsOperator = false
     private val rules = RulesCalculator() //aqui llamames el doc aparte con las reglas
 
@@ -25,6 +26,9 @@ class CalculatorViewModel: ViewModel() {
     changeSymbol: String,
     subtractionSymbol: String,
     addSymbol: String,
+    multiplySymbol: String,
+    divideSymbol: String,
+    percentSymbol: String,
     isOperator: Boolean
     ) {
         if (valueButton.isEmpty()) return
@@ -45,10 +49,15 @@ class CalculatorViewModel: ViewModel() {
     }
 
     if (valueButton == equalSymbol) {
-            return
-        }
+        calculateResult(addSymbol, subtractionSymbol, multiplySymbol, divideSymbol, percentSymbol)
+        return
+    }
     if (valueButton == subtractionSymbol) {
         addMinus(valueButton, addSymbol)
+        return
+    }
+    if (valueButton == decimalSeparator) {
+        addDecimalSeparator()
         return
     }
 
@@ -81,7 +90,7 @@ class CalculatorViewModel: ViewModel() {
     }
 
     fun addOperator(operatorSymbol: String) {
-        if (!rules.canAddOperator(nodes, lastIsOperator, negativeSign)) return
+        if (!rules.canAddOperator(nodes, lastIsOperator, negativeSign, decimalSeparator )) return
         if (lastIsOperator) {
             nodes[nodes.size - 1] = operatorSymbol
         } else {
@@ -92,6 +101,7 @@ class CalculatorViewModel: ViewModel() {
     }
 
     fun showNodes() {
+        expression.value = ""
         if (nodes.isEmpty()) {
             result.value = "0"
         } else {
@@ -101,6 +111,7 @@ class CalculatorViewModel: ViewModel() {
     fun clearFunction() {
         nodes.clear()
         lastIsOperator = false
+        expression.value = ""
         result.value = "0"
     }
 
@@ -169,4 +180,95 @@ class CalculatorViewModel: ViewModel() {
         }
     }
 
+    fun addDecimalSeparator() {
+        if (!rules.canAddDecimalSeparator(nodes, lastIsOperator, decimalSeparator)) return
+
+        val lastIndex = nodes.size - 1
+        nodes[lastIndex] = nodes[lastIndex] + decimalSeparator
+        showNodes()
+    }
+    fun calculateResult(
+        addSymbol: String,
+        subtractionSymbol: String,
+        multiplySymbol: String,
+        divideSymbol: String,
+        percentSymbol: String
+    ) {
+        if (!rules.canCalculate(nodes, lastIsOperator)) return
+
+        val items = mutableListOf<String>()
+        items.addAll(nodes)
+
+        solveFirstPriority(items, multiplySymbol, divideSymbol, percentSymbol)
+
+        solveSecondPriority(items, addSymbol)
+        expression.value = nodes.joinToString("")
+        result.value = resultHistory(items[0].toDouble())
+    }
+
+    fun solveFirstPriority(
+        items: MutableList<String>,
+        multiplySymbol: String,
+        divideSymbol: String,
+        percentSymbol: String
+    ) {
+        var index = 1
+        while (index < items.size) {
+            val operator = items[index]
+            val isFirstPriority = operator == multiplySymbol || operator == divideSymbol || operator == percentSymbol
+
+            if (isFirstPriority) {
+                val number1 = items[index - 1].replace(decimalSeparator, ".").toDouble()
+                val number2 = items[index + 1].replace(decimalSeparator, ".").toDouble()
+                var partialResult = 0.0
+
+                if (operator == multiplySymbol) {
+                    partialResult = model.multiply(number1, number2)
+                }
+                if (operator == divideSymbol) {
+                    partialResult = model.divide(number1, number2)
+                }
+                if (operator == percentSymbol) {
+                    partialResult = model.module(number1, number2)
+                }
+
+                items[index - 1] = partialResult.toString()
+                items.removeAt(index)
+                items.removeAt(index)
+            } else {
+                index += 2
+            }
+        }
+
+    }
+
+
+    fun solveSecondPriority(
+        items: MutableList<String>,
+        addSymbol: String
+    ) {
+        while (items.size > 1) {
+            val number1 = items[0].replace(decimalSeparator, ".").toDouble()
+            val operator = items[1]
+            val number2 = items[2].replace(decimalSeparator, ".").toDouble()
+            var partialResult = 0.0
+
+            if (operator == addSymbol) {
+                partialResult = model.add(number1, number2)
+            } else {
+                partialResult = model.subtraction(number1, number2)
+            }
+
+            items[0] = partialResult.toString()
+            items.removeAt(1)
+            items.removeAt(1)
+        }
+    }
+    fun resultHistory(number: Double): String {
+        var text = number.toString()
+        if (text.endsWith(".0")) {
+            text = text.removeSuffix(".0")
+        }
+        return text.replace(".", decimalSeparator)
+    }
 }

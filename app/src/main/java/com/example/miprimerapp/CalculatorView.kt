@@ -37,6 +37,11 @@ import androidx.compose.ui.res.stringResource
 
 import androidx.compose.material3.Icon
 import androidx.compose.ui.res.painterResource
+//para poder hacer las operaciones se vayan hacia la izq
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.unit.TextUnit
 @Composable
 fun ShowCalculator(
     viewModel: CalculatorViewModel = viewModel(),
@@ -87,7 +92,6 @@ fun ShowCalculator(
             }
         }
 
-        // ZONA 2 Y 3: PANTALLA Y TECLADO
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -95,30 +99,14 @@ fun ShowCalculator(
                 .padding(10.dp),
             verticalArrangement = Arrangement.Bottom,
         ) {
+
+
             // Expresión (gris)
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 5.dp, start = 5.dp),
-                text = expression,
-                fontSize = 40.sp,
-                color = Color.Gray,
-                textAlign = TextAlign.End,
-                softWrap = false,
-                maxLines = 1
-            )
+            ShowDisplayText(text = expression, fontSize = 40.sp, color = Color.Gray)
             // Resultado (blanco)
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 5.dp, start = 5.dp),
-                text = result,
-                fontSize = 75.sp,
-                color = Color.White,
-                textAlign = TextAlign.End,
-                softWrap = false,
-                maxLines = 1
-            )
+            ShowDisplayText(text = result, fontSize = 75.sp, color = Color.White)
+
+
             Column(
                 Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(7.dp)
@@ -181,10 +169,13 @@ fun ShowButton(text: String, color: Color, viewModel: CalculatorViewModel, isOpe
     val changeSymbol = stringResource(id = R.string.changeSymbol)
     val subtractionSymbol = stringResource(id = R.string.subtractionSymbol)
     val addSymbol = stringResource(id = R.string.addSymbol)
+    val multiplySymbol = stringResource(id = R.string.multiplySymbol)
+    val divideSymbol = stringResource(id = R.string.divideSymbol)
+    val percentSymbol = stringResource(id = R.string.percentSymbol)
     Button(
         onClick = {
             //se debe mantener el orden que hay en CalculatorViewModel
-            viewModel.manageClickButtons(text, equalSymbol, msgError, clearSymbol, backspaceSymbol, changeSymbol,subtractionSymbol,addSymbol,isOperator)},
+            viewModel.manageClickButtons(text, equalSymbol, msgError, clearSymbol, backspaceSymbol, changeSymbol,subtractionSymbol,addSymbol,multiplySymbol,divideSymbol,percentSymbol,isOperator)},
         shape = CircleShape,
         colors = ButtonDefaults.buttonColors(color),
         modifier = Modifier
@@ -196,7 +187,24 @@ fun ShowButton(text: String, color: Color, viewModel: CalculatorViewModel, isOpe
         )
     }
 }
-
+@Composable
+fun ShowDisplayText(text: String, fontSize: TextUnit, color: Color) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(end = 5.dp, start = 5.dp),
+        contentAlignment = Alignment.CenterEnd
+    ) {
+        Text(
+            modifier = Modifier.horizontalScroll(rememberScrollState(), reverseScrolling = true),
+            text = text,
+            fontSize = fontSize,
+            color = color,
+            softWrap = false,
+            maxLines = 1
+        )
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
