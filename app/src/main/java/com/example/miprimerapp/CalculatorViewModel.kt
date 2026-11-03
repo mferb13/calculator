@@ -134,6 +134,7 @@ class CalculatorViewModel: ViewModel() {
 
     fun backspaceSymbolfunction() {
         if (nodes.isEmpty()) return
+        if (showingResult) return
 
         val lastIndex = nodes.size - 1
         val shortenedText = nodes[lastIndex].dropLast(1)
