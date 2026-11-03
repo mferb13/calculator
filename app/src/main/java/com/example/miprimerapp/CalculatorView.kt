@@ -63,7 +63,7 @@ fun ShowCalculator(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(colorResource(id = R.color.black))
             .safeDrawingPadding()
     ) {
         // ZONA 1: BARRA SUPERIOR
@@ -108,11 +108,10 @@ fun ShowCalculator(
             verticalArrangement = Arrangement.Bottom,
         ) {
 
-// Expresión (gris)
-            ShowDisplayText(text = expression, fontSize = 40.sp, color = Color.Gray)
+            // Expresión (gris)
+            ShowDisplayText(text = expression, fontSize = 40.sp, color = colorResource(id = R.color.expressionGray))
             // Resultado (blanco)
-            ShowDisplayText(text = resultText, fontSize = 75.sp, color = Color.White)
-
+            ShowDisplayText(text = resultText, fontSize = 75.sp, color = colorResource(id = R.color.white))
             Column(
                 Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(7.dp)
