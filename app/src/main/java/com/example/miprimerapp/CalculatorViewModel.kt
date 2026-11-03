@@ -12,7 +12,7 @@ class CalculatorViewModel: ViewModel() {
 
     val expression = mutableStateOf("")
     val nodes = mutableListOf<String>()
-    private val negativeSign = "-"
+    private val negativeSign = "−"
     private val decimalSeparator = ","
     var lastIsOperator = false
     private var showingResult = false
@@ -26,7 +26,6 @@ class CalculatorViewModel: ViewModel() {
     fun manageClickButtons(
     valueButton: String,
     equalSymbol: String,
-    msgError: String,
     clearSymbol: String,
     backspaceSymbol: String,
     changeSymbol: String,
@@ -55,7 +54,7 @@ class CalculatorViewModel: ViewModel() {
     }
 
     if (valueButton == equalSymbol) {
-        calculateResult(addSymbol, subtractionSymbol, multiplySymbol, divideSymbol, percentSymbol)
+        calculateResult(addSymbol, multiplySymbol, divideSymbol, percentSymbol)
         return
     }
     if (valueButton == subtractionSymbol) {
@@ -207,7 +206,6 @@ class CalculatorViewModel: ViewModel() {
     }
     fun calculateResult(
         addSymbol: String,
-        subtractionSymbol: String,
         multiplySymbol: String,
         divideSymbol: String,
         percentSymbol: String
@@ -250,8 +248,8 @@ class CalculatorViewModel: ViewModel() {
             val isFirstPriority = operator == multiplySymbol || operator == divideSymbol || operator == percentSymbol
 
             if (isFirstPriority) {
-                val number1 = items[index - 1].replace(decimalSeparator, ".").toDouble()
-                val number2 = items[index + 1].replace(decimalSeparator, ".").toDouble()
+                val number1 = toNumber(items[index - 1])
+                val number2 = toNumber(items[index + 1])
 
                 if ((operator == divideSymbol || operator == percentSymbol) && number2 == 0.0) {
                     error.value = CalculatorError.DivisionByZero
@@ -285,9 +283,9 @@ class CalculatorViewModel: ViewModel() {
         addSymbol: String
     ) {
         while (items.size > 1) {
-            val number1 = items[0].replace(decimalSeparator, ".").toDouble()
+            val number1 = toNumber(items[0])
             val operator = items[1]
-            val number2 = items[2].replace(decimalSeparator, ".").toDouble()
+            val number2 = toNumber(items[2])
             var partialResult = 0.0
 
             if (operator == addSymbol) {
@@ -306,6 +304,8 @@ class CalculatorViewModel: ViewModel() {
         if (text.endsWith(".0")) {
             text = text.removeSuffix(".0")
         }
-        return text.replace(".", decimalSeparator)
+        return text.replace(".", decimalSeparator).replace("-", negativeSign)    }
+    fun toNumber(text: String): Double {
+        return text.replace(decimalSeparator, ".").replace(negativeSign, "-").toDouble()
     }
 }

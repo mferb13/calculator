@@ -168,7 +168,6 @@ fun ShowCalculator(
 @Composable
 fun ShowButton(text: String, color: Color, viewModel: CalculatorViewModel, isOperator: Boolean = false) {
     val equalSymbol = stringResource(id = R.string.equalSymbol)
-    val msgError = stringResource(id = R.string.msgError)
     val clearSymbol = stringResource(id = R.string.clearSymbol)
     val backspaceSymbol = stringResource(id = R.string.backspaceSymbol)
     val changeSymbol = stringResource(id = R.string.changeSymbol)
@@ -180,7 +179,8 @@ fun ShowButton(text: String, color: Color, viewModel: CalculatorViewModel, isOpe
     Button(
         onClick = {
             //se debe mantener el orden que hay en CalculatorViewModel
-            viewModel.manageClickButtons(text, equalSymbol, msgError, clearSymbol, backspaceSymbol, changeSymbol,subtractionSymbol,addSymbol,multiplySymbol,divideSymbol,percentSymbol,isOperator)},
+            viewModel.manageClickButtons(text, equalSymbol, clearSymbol, backspaceSymbol, changeSymbol, subtractionSymbol, addSymbol, multiplySymbol, divideSymbol, percentSymbol, isOperator)
+        },
         shape = CircleShape,
         colors = ButtonDefaults.buttonColors(color),
         modifier = Modifier
