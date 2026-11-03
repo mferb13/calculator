@@ -28,4 +28,8 @@
     <string name="digitNine">9</string>
 
     <string name="divisionByZeroError">Error</string>
+    //parte de navegacion de historial
+    <string name="backButton">Back</string>
+    <string name="historyEmpty">No operations yet</string>
+    <string name="historyEntry">%1$s = %2$s</string>
 </resources>

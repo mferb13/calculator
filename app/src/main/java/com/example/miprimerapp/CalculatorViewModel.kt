@@ -2,6 +2,7 @@ package com.example.miprimerapp
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.compose.runtime.mutableStateListOf
 
 class CalculatorViewModel: ViewModel() {
 
@@ -17,6 +18,9 @@ class CalculatorViewModel: ViewModel() {
     private var showingResult = false
     private val rules = RulesCalculator() //aqui llamames el doc aparte con las reglas
     val error = mutableStateOf(CalculatorError.None)
+    val history = mutableStateListOf<HistoryEntry>()
+
+
 
 // Para agregar cada funcion de un operador se debe mantener el orden
     fun manageClickButtons(
@@ -225,11 +229,13 @@ class CalculatorViewModel: ViewModel() {
         val finalText = resultHistory(items[0].toDouble())
         expression.value = nodes.joinToString("")
         result.value = finalText
+        history.add(HistoryEntry(expression.value, finalText))
 
         nodes.clear()
         nodes.add(finalText)
         lastIsOperator = false
         showingResult = true
+
     }
 
     fun solveFirstPriority(

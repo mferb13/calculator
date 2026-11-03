@@ -42,9 +42,14 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.unit.TextUnit
+
+//parte de navegacion de historial
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 @Composable
 fun ShowCalculator(
     viewModel: CalculatorViewModel = viewModel(),
+    navController: NavController
 ) {
     val result = viewModel.result.value
     val expression = viewModel.expression.value
@@ -69,8 +74,7 @@ fun ShowCalculator(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Button(
-                onClick = {  },
-                shape = CircleShape,
+                onClick = { navController.navigate(historyRoute) },                shape = CircleShape,
                 colors = ButtonDefaults.buttonColors(colorResource(id = R.color.numberButton)),
                 contentPadding = PaddingValues(0.dp),
                 modifier = Modifier.size(48.dp)
@@ -211,5 +215,5 @@ fun ShowDisplayText(text: String, fontSize: TextUnit, color: Color) {
 @Preview(showBackground = true)
 @Composable
 fun TestView(){
-    ShowCalculator()
+    ShowCalculator(navController = rememberNavController())
 }
